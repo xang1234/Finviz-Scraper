@@ -5,7 +5,7 @@ import progressbar
 
 
 def scrape_finviz(symbols):
-    # Get Column Headers
+    # Get Column Header
     req = requests.get("https://finviz.com/quote.ashx?t=FB")
     soup = BeautifulSoup(req.content, 'html.parser')
     table = soup.find_all(lambda tag: tag.name=='table')
@@ -15,10 +15,9 @@ def scrape_finviz(symbols):
         td=rows[i].find_all('td')
         out=out+[x.text for x in td]
 
-    ls=['Ticker']+out[::2]
-    dict_ls={k:ls[k] for k in range(len(ls))}
+    ls=['Ticker','Sector','Sub-Sector','Country']+out[::2]
 
-    #  Scrape required Data from symbols
+    dict_ls={k:ls[k] for k in range(len(ls))}
     df=pd.DataFrame()
     p = progressbar.ProgressBar()
     p.start()
@@ -29,12 +28,19 @@ def scrape_finviz(symbols):
             continue
         soup = BeautifulSoup(req.content, 'html.parser')
         table = soup.find_all(lambda tag: tag.name=='table')
+
+        rows=table[6].findAll(lambda tag: tag.name=='tr')
+        sector=[]
+        for i in range(len(rows)):
+            td=rows[i].find_all('td')
+            sector=sector+[x.text for x in td]
+        sector=sector[2].split('|')
         rows = table[8].findAll(lambda tag: tag.name=='tr')
         out=[]
         for i in range(len(rows)):
             td=rows[i].find_all('td')
             out=out+[x.text for x in td]
-        out=[symbols[j]]+out[1::2]
+        out=[symbols[j]]+sector+out[1::2]
         out_df=pd.DataFrame(out).transpose()
         df=df.append(out_df,ignore_index=True)
 
@@ -43,5 +49,5 @@ def scrape_finviz(symbols):
 
     return(df)
 
-### Example usage
-data=scrape_finviz(['FB','INGN'])
+
+data=scrape_finviz(['FB','INGN','BABA','RMD','GOOS'])

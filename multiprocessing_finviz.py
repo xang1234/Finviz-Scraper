@@ -52,11 +52,17 @@ def scrape_finviz(symbols, output):
 
 def main():
     # Get time to append to file name
-    now=datetime.datetime.now()
+    now=datetime.datetime.now() 
     # Define default save path
     default_path='Z:/Manufacturing/Inova/ResMed/David/SnP500-finviz/'
-    if sys.argv[1] is not None:
-        default_path=sys.argv[1]
+    while True:
+        try:
+            default_path=sys.argv[1] 
+            break
+        except:
+            print('Default path is:',default_path)
+            break
+
     # Define an output queue
     output = Queue()
     spy=pd.read_csv('https://datahub.io/core/s-and-p-500-companies/r/constituents.csv')
@@ -64,7 +70,7 @@ def main():
 
 
     ### Split into 4 lists of Symbols
-    num=4
+    num=3
     div=[spy_list[i::num] for i in range(num)]
     start=time.time()
 

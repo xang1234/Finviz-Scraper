@@ -6,10 +6,10 @@ import progressbar
 
 def scrape_finviz(symbols):
     # Get Column Header
-    req = requests.get("https://finviz.com/quote.ashx?t=FB")
+    req = requests.get("https://finviz.com/quote.ashx?t=MSFT")
     soup = BeautifulSoup(req.content, 'html.parser')
     table = soup.find_all(lambda tag: tag.name=='table')
-    rows = table[8].findAll(lambda tag: tag.name=='tr')
+    rows = table[9].findAll(lambda tag: tag.name=='tr')
     out=[]
     for i in range(len(rows)):
         td=rows[i].find_all('td')
@@ -35,7 +35,7 @@ def scrape_finviz(symbols):
             td=rows[i].find_all('td')
             sector=sector+[x.text for x in td]
         sector=sector[2].split('|')
-        rows = table[8].findAll(lambda tag: tag.name=='tr')
+        rows = table[9].findAll(lambda tag: tag.name=='tr')
         out=[]
         for i in range(len(rows)):
             td=rows[i].find_all('td')
@@ -50,4 +50,4 @@ def scrape_finviz(symbols):
     return(df)
 
 
-data=scrape_finviz(['FB','INGN','BABA','RMD','GOOS'])
+data=scrape_finviz(['META','MSFT','BABA','TSLA''])
